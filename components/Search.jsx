@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { SongList } from "./SongList";
-import styled from "styled-components";
+import styled from "styled-components/native";
 import Axios from "axios";
-import { serverUrl } from "./constants/constants";
+import { serverUrl } from "../constants/constants";
 
 const Wrapper = styled.View`
   display: flex;
@@ -59,14 +59,14 @@ const Search = () => {
         `${serverUrl}/getNextOriginSongs`,
         {
           start: 0,
-          end: 100
+          end: 100,
         }
       );
       const firstDestinationBatch = await Axios.post(
         `${serverUrl}/getNextDestinationSongs`,
         {
           start: 0,
-          end: 100
+          end: 100,
         }
       );
 
@@ -83,23 +83,23 @@ const Search = () => {
     const matchingTracks = await Axios.post(`${serverUrl}/getMatchingSongs`, {
       bpm: text,
       start: 0,
-      end: 100
+      end: 100,
     });
 
     setBpm(text);
     setOriginSearchResults(matchingTracks.data);
   };
 
-  const handleChange = text => setText(text);
+  const handleChange = (text) => setText(text);
 
-  const addSongToDestination = async song => {
+  const addSongToDestination = async (song) => {
     try {
       await Axios.post(`${serverUrl}/addTrack`, {
-        trackId: song.uri
+        trackId: song.uri,
       });
       setDestinationSongs([...destinationSongs, song]);
       setOriginSearchResults(
-        originSearchResults.filter(item => item.id !== song.id)
+        originSearchResults.filter((item) => item.id !== song.id)
       );
     } catch (error) {
       console.log(error);
@@ -110,7 +110,7 @@ const Search = () => {
     try {
       await Axios.post(`${serverUrl}/removeTrack`, {
         trackId: song.uri,
-        position
+        position,
       });
 
       setDestinationSongs(
@@ -152,7 +152,7 @@ const Search = () => {
       ) : (
         <ListsContainer>
           <SongList
-            label="Search Results from SpotTempo playlist (limit 100)"
+            label="Search Results from Liked Songs"
             songs={originSearchResults}
             shiftSong={addSongToDestination}
             listName="searchResults"

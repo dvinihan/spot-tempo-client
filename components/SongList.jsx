@@ -1,6 +1,6 @@
 import React from "react";
 import Song from "./Song";
-import styled from "styled-components";
+import styled from "styled-components/native";
 import { Text, FlatList } from "react-native";
 
 const Header = styled.View`
@@ -19,15 +19,15 @@ export const SongList = ({ label, shiftSong, listName, songs }) => (
     </Header>
     <FlatList
       data={songs.map((song, index) => ({ song, key: index.toString() }))}
-      renderItem={({item, index}) => (
-       <Song
+      renderItem={({ item, index }) => (
+        <Song
           song={item.song}
           shiftSong={shiftSong}
           listName={listName}
           index={index}
         />
       )}
-      />
+    />
   </List>
 );
 

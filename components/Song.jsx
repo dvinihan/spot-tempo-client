@@ -1,12 +1,12 @@
 import React from "react";
-import styled from "styled-components";
 import { View } from "react-native";
+import styled from "styled-components/native";
 
 const SongItem = styled.TouchableHighlight`
   margin: 20px;
   padding: 10px;
   border-radius: 20px;
-  background-color: ${props =>
+  background-color: ${(props) =>
     props.listName === "searchResults" ? "#f0eeb7" : "#c8e2ee"};
   display: flex;
   justify-content: space-between;
