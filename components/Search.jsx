@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { SongList } from "./SongList";
 import styled from "styled-components/native";
-import { serverUrl } from "../constants/constants";
-import { Button, Text, View } from "react-native";
-import axios from "axios";
+import { Button, Text } from "react-native";
+import { useMatchingSongs, useSavedSongsCount } from "../queries/songs";
+import { useReloadSavedSongs } from "../mutations/songs";
 
 const SearchArea = styled.View`
   display: flex
@@ -18,12 +18,6 @@ const SearchBar = styled.TextInput`
   width: 120px;
   padding: 12px;
 `;
-// const ListsContainer = styled.View`
-//   display: flex;
-//   flex-direction: row;
-//   justify-content: center;
-//   width: 100%;
-// `;
 const SearchButton = styled.Button`
   padding: 15px;
 `;
@@ -35,130 +29,85 @@ const Loading = styled.Text`
 `;
 
 const Search = () => {
-  const [destinationSongs, setDestinationSongs] = useState([]);
-  const [originSearchResults, setOriginSearchResults] = useState([]);
   const [bpm, setBpm] = useState();
-  const [isLoading, setIsLoading] = useState();
-  const [text, setText] = useState();
-  const [savedSongsCount, setSavedSongsCount] = useState();
 
-  useEffect(() => {
-    (async () => {
-      const { data } = await axios.get(`${serverUrl}/getSavedSongsCount`);
-      setSavedSongsCount(data.total);
-    })();
-  }, []);
+  const getSavedSongsCountQuery = useSavedSongsCount();
+  const reloadSavedSongsMutation = useReloadSavedSongs();
 
-  const reloadSavedSongs = async () => {
-    const { data } = await axios.get(`${serverUrl}/reload`);
-    setSavedSongsCount(data.total);
-  };
+  const getMatchingSongsQuery = useMatchingSongs({ bpm });
 
-  // useEffect(() => {
-  //   const getInitialSongs = async () => {
-  //     setIsLoading(true);
+  const reloadSavedSongs = () => reloadSavedSongsMutation.mutate();
 
-  //     const firstOriginBatch = await Axios.post(
-  //       `${serverUrl}/getNextSavedSongs`,
-  //       {
-  //         start: 0,
-  //         end: 100,
-  //       }
+  const handleChange = (text) => setBpm(text);
+
+  const handleSearch = () => getMatchingSongsQuery.refetch();
+
+  // const addSongToDestination = async (song) => {
+  //   try {
+  //     await axios.post(`${serverUrl}/addTrack`, {
+  //       trackId: song.uri,
+  //     });
+  //     setDestinationSongs([...destinationSongs, song]);
+  //     setOriginSearchResults(
+  //       originSearchResults.filter((item) => item.id !== song.id)
   //     );
-  //     const firstDestinationBatch = await Axios.post(
-  //       `${serverUrl}/getNextDestinationSongs`,
-  //       {
-  //         start: 0,
-  //         end: 100,
-  //       }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  // const removeSongFromDestination = async (song, position) => {
+  //   try {
+  //     await axios.post(`${serverUrl}/removeTrack`, {
+  //       trackId: song.uri,
+  //       position,
+  //     });
+
+  //     setDestinationSongs(
+  //       destinationSongs.filter(
+  //         (track, index) => track.id !== song.id && index !== position
+  //       )
   //     );
+  //     if (song.tempo > bpm - 5 && song.tempo < bpm + 5) {
+  //       setOriginSearchResults([...originSearchResults, song]);
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
-  //     setOriginSearchResults(firstOriginBatch.data);
-  //     setDestinationSongs(firstDestinationBatch.data);
-
-  //     setIsLoading(false);
-  //   };
-
-  //   getInitialSongs();
-  // }, []);
-
-  const handleSearch = async () => {
-    const matchingTracks = await axios.post(`${serverUrl}/getMatchingSongs`, {
-      bpm: text,
-      start: 0,
-      end: 100,
-    });
-
-    setBpm(text);
-    setOriginSearchResults(matchingTracks.data);
-  };
-
-  const handleChange = (text) => setText(text);
-
-  const addSongToDestination = async (song) => {
-    try {
-      await axios.post(`${serverUrl}/addTrack`, {
-        trackId: song.uri,
-      });
-      setDestinationSongs([...destinationSongs, song]);
-      setOriginSearchResults(
-        originSearchResults.filter((item) => item.id !== song.id)
-      );
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const removeSongFromDestination = async (song, position) => {
-    try {
-      await axios.post(`${serverUrl}/removeTrack`, {
-        trackId: song.uri,
-        position,
-      });
-
-      setDestinationSongs(
-        destinationSongs.filter(
-          (track, index) => track.id !== song.id && index !== position
-        )
-      );
-      if (song.tempo > bpm - 5 && song.tempo < bpm + 5) {
-        setOriginSearchResults([...originSearchResults, song]);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const savedSongsCount =
+    reloadSavedSongsMutation.data?.total ?? getSavedSongsCountQuery.data?.total;
 
   return (
     <>
       <Text>Total saved songs: {savedSongsCount}</Text>
 
-      <Button onPress={reloadSavedSongs} title="Reload saved songs" />
-
-      <SearchArea>
-        <SearchBar
-          id="searchbar"
-          type="text"
-          onChangeText={handleChange}
-          placeholder="BPM"
-          placeholderTextColor="white"
-        />
-        <SearchButton title="Search" onPress={handleSearch}>
-          <SearchText>Search</SearchText>
-        </SearchButton>
-      </SearchArea>
-
-      {isLoading ? (
+      {reloadSavedSongsMutation.isLoading ? (
         <Loading>Loading all of your saved songs...</Loading>
       ) : (
-        <View>
+        <>
+          <Button onPress={reloadSavedSongs} title="Reload saved songs" />
+
+          <SearchArea>
+            <SearchBar
+              id="searchbar"
+              type="text"
+              onChangeText={handleChange}
+              placeholder="BPM"
+              placeholderTextColor="white"
+            />
+            <SearchButton title="Search" onPress={handleSearch}>
+              <SearchText>Search</SearchText>
+            </SearchButton>
+          </SearchArea>
+
           <SongList
             label="Search Results from Liked Songs"
-            songs={originSearchResults}
-            shiftSong={addSongToDestination}
-            listName="searchResults"
+            songs={getMatchingSongsQuery.data}
+            // shiftSong={addSongToDestination}
           />
-        </View>
+        </>
       )}
     </>
   );

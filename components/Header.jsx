@@ -9,16 +9,14 @@ const HeaderText = styled.Text`
   margin: 20px 60px;
 `;
 
-const Header = () => {
-  return (
-    <>
-      <Title>Spotify BPM Picker</Title>
-      <HeaderText>
-        This app will allow you to search for songs by BPM in your Liked Songs,
-        and add them to your "SpotTempo Workout" playlist.
-      </HeaderText>
-    </>
-  );
-};
+const Header = () => (
+  <>
+    <Title>Spotify BPM Picker</Title>
+    <HeaderText>
+      This app will allow you to search for songs by BPM in your Liked Songs,
+      and add them to your "SpotTempo" playlist.
+    </HeaderText>
+  </>
+);
 
 export default Header;

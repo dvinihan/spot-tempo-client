@@ -8,7 +8,7 @@ const List = styled.View`
   height: 68%;
 `;
 
-export const SongList = ({ label, shiftSong, listName, songs }) => (
+export const SongList = ({ shiftSong, listName, songs = [] }) => (
   // <List>
   <FlatList
     data={songs.map((song, index) => ({ song, key: index.toString() }))}
