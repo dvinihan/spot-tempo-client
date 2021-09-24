@@ -1,12 +1,12 @@
-import React from 'react'
-import Song from './Song'
-import styled from 'styled-components/native'
-import { FlatList } from 'react-native'
+import React from "react";
+import Song from "./Song";
+import styled from "styled-components/native";
+import { FlatList } from "react-native";
 
 const List = styled.View`
   width: 50%;
   height: 68%;
-`
+`;
 
 export const SongList = ({ label, shiftSong, listName, songs }) => (
   // <List>
@@ -22,6 +22,6 @@ export const SongList = ({ label, shiftSong, listName, songs }) => (
     )}
   />
   // </List>
-)
+);
 
-export default SongList
+export default SongList;
