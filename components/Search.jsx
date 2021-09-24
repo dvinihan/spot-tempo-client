@@ -130,8 +130,8 @@ const Search = () => {
     <Wrapper>
       <Title>Spotify BPM Picker</Title>
       <HeaderText>
-        This app will allow you to search for songs by BPM in your "SpotTempo"
-        playlist, and add them to your "SpotTempo Workout" playlist.
+        This app will allow you to search for songs by BPM in your Liked Songs,
+        and add them to your "SpotTempo Workout" playlist.
       </HeaderText>
 
       <SearchArea>
@@ -148,7 +148,7 @@ const Search = () => {
       </SearchArea>
 
       {isLoading ? (
-        <Loading>Loading...</Loading>
+        <Loading>Loading all of your saved songs...</Loading>
       ) : (
         <ListsContainer>
           <SongList
