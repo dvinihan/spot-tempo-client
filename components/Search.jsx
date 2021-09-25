@@ -54,40 +54,6 @@ const Search = () => {
 
   const handleSearch = () => getMatchingSongsQuery.refetch();
 
-  // const addSongToDestination = async (song) => {
-  //   try {
-  //     await axios.post(`${serverUrl}/addTrack`, {
-  //       trackId: song.uri,
-  //     });
-  //     setDestinationSongs([...destinationSongs, song]);
-  //     setOriginSearchResults(
-  //       originSearchResults.filter((item) => item.id !== song.id)
-  //     );
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  // const removeSongFromDestination = async (song, position) => {
-  //   try {
-  //     await axios.post(`${serverUrl}/removeTrack`, {
-  //       trackId: song.uri,
-  //       position,
-  //     });
-
-  //     setDestinationSongs(
-  //       destinationSongs.filter(
-  //         (track, index) => track.id !== song.id && index !== position
-  //       )
-  //     );
-  //     if (song.tempo > bpm - 5 && song.tempo < bpm + 5) {
-  //       setOriginSearchResults([...originSearchResults, song]);
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
   const savedSongsCount =
     reloadSavedSongsMutation.data?.total ?? getSavedSongsCountQuery.data?.total;
 
@@ -120,7 +86,9 @@ const Search = () => {
           <FlatList
             data={getMatchingSongsQuery.data}
             keyExtractor={(item) => item.id}
-            renderItem={({ item }) => <Song song={item} />}
+            renderItem={({ item }) => (
+              <Song song={item} getMatchingSongsQuery={getMatchingSongsQuery} />
+            )}
           />
         </>
       )}

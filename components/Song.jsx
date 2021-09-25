@@ -1,7 +1,9 @@
 import { truncate } from "lodash";
-import React from "react";
-import { TouchableHighlight } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator } from "react-native";
+import { useMutation } from "react-query";
 import styled from "styled-components/native";
+import { addSong, removeSong } from "../queries/songs";
 
 const SongView = styled.View`
   margin: 20px;
@@ -37,32 +39,69 @@ const SongName = styled.Text`
 const SongDetail = styled.Text`
   font-size: 20px;
 `;
+const LoadingView = styled.View`
+  background-color: rgba(255, 255, 255, 0.8);
+  position: absolute;
+  left: 0;
+  border-radius: 20px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
-export const Song = ({ song }) => {
-  const shiftSong = () => {};
+export const Song = ({ song, getMatchingSongsQuery }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  // this is needed to prevent lag in color change
+  useEffect(() => {
+    if (!getMatchingSongsQuery.isRefetching) {
+      setIsLoading(false);
+    }
+  }, [getMatchingSongsQuery.isRefetching]);
+
+  const addSongMutation = useMutation("addSong", addSong);
+  const removeSongMutation = useMutation("removeSong", removeSong);
+
+  const shiftSong = () => {
+    const mutation = song.isInDestinationPlaylist
+      ? removeSongMutation
+      : addSongMutation;
+
+    setIsLoading(true);
+    mutation.mutate({ songUri: song.uri, getMatchingSongsQuery });
+  };
 
   const truncatedSongName = truncate(song.name, { length: 30 });
-
   const truncatedArtistName = truncate(song.artist, {
     length: 30,
   });
 
   return (
-    <SongView isInDestinationPlaylist={song.isInDestinationPlaylist}>
-      <Touchable onPress={() => shiftSong(song)}>
-        <AddRemoveText>
-          {song.isInDestinationPlaylist ? "-" : "+"}
-        </AddRemoveText>
-      </Touchable>
+    <>
+      <SongView isInDestinationPlaylist={song.isInDestinationPlaylist}>
+        <Touchable onPress={() => shiftSong(song)}>
+          <AddRemoveText>
+            {song.isInDestinationPlaylist ? "-" : "+"}
+          </AddRemoveText>
+        </Touchable>
 
-      <SongInfo>
-        <SongName>{truncatedSongName}</SongName>
-        <SongDetail>{truncatedArtistName}</SongDetail>
-        <SongDetail>{song.tempo} BPM</SongDetail>
-      </SongInfo>
+        <SongInfo>
+          <SongName>{truncatedSongName}</SongName>
+          <SongDetail>{truncatedArtistName}</SongDetail>
+          <SongDetail>{song.tempo} BPM</SongDetail>
+        </SongInfo>
 
-      <Spacer />
-    </SongView>
+        <Spacer />
+
+        {isLoading && (
+          <LoadingView>
+            <ActivityIndicator size="large" />
+          </LoadingView>
+        )}
+      </SongView>
+    </>
   );
 };
 

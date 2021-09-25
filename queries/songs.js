@@ -17,3 +17,19 @@ export const getMatchingSongs = async (bpm) => {
   );
   return data;
 };
+
+export const addSong = async ({ songUri, getMatchingSongsQuery }) => {
+  const { data, status } = await axios.post(`${serverUrl}/addSong`, {
+    songUri,
+  });
+  status === 200 && getMatchingSongsQuery.refetch();
+  return data;
+};
+
+export const removeSong = async ({ songUri, getMatchingSongsQuery }) => {
+  const { data, status } = await axios.delete(
+    `${serverUrl}/removeSong?songUri=${songUri}`
+  );
+  status === 200 && getMatchingSongsQuery.refetch();
+  return data;
+};
