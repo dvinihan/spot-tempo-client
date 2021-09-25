@@ -6,8 +6,10 @@ export const reloadSavedSongs = async () => {
   return data;
 };
 
-export const getSavedSongsCount = async () => {
-  const { data } = await axios.get(`${serverUrl}/getSavedSongsCount`);
+export const getSavedSongsCount = async (userId) => {
+  const { data } = await axios.get(
+    `${serverUrl}/getSavedSongsCount?user=${userId}`
+  );
   return data;
 };
 

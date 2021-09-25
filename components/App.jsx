@@ -16,7 +16,7 @@ const AppView = styled.View`
 `;
 
 const App = () => {
-  const { accessToken, isLoading, login } = useAuth();
+  const { accessToken, isLoading, login, userId } = useAuth();
 
   return (
     <AppView>
@@ -24,7 +24,7 @@ const App = () => {
       {isLoading ? (
         <Text>Loading...</Text>
       ) : accessToken ? (
-        <Search />
+        <Search userId={userId} />
       ) : (
         <Button onPress={login} title="Log in to Spotify" />
       )}

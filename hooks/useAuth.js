@@ -37,20 +37,18 @@ export const useAuth = () => {
   // Once auth is complete behind the scenes, we can login to our server
   useEffect(() => {
     (async () => {
-      if (
-        !accessTokenQuery.data?.access_token &&
-        response?.type === "success"
-      ) {
+      if (!accessTokenQuery.data?.accessToken && response?.type === "success") {
         const { code } = response.params;
         loginMutation.mutate({ code, redirectUri: request.redirectUri });
       }
     })();
-  }, [request, response, accessTokenQuery.data?.access_token]);
+  }, [request, response, accessTokenQuery.data?.accessToken]);
 
   return {
     accessToken:
-      accessTokenQuery.data?.access_token || loginMutation.data?.access_token,
+      accessTokenQuery.data?.accessToken || loginMutation.data?.accessToken,
     isLoading: accessTokenQuery.isLoading || loginMutation.isLoading,
     login: promptAsync,
+    userId: loginMutation.data?.userId,
   };
 };

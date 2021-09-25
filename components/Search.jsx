@@ -32,12 +32,11 @@ const Loading = styled.Text`
   margin-top: 20px;
 `;
 
-const Search = () => {
+const Search = ({ userId }) => {
   const [bpm, setBpm] = useState();
 
-  const getSavedSongsCountQuery = useQuery(
-    "getSavedSongsCount",
-    getSavedSongsCount
+  const getSavedSongsCountQuery = useQuery("getSavedSongsCount", () =>
+    getSavedSongsCount(userId)
   );
   const reloadSavedSongsMutation = useMutation(
     "reloadSavedSongs",
