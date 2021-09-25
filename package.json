@@ -1,7 +1,7 @@
 {
   "main": "index.js",
   "proxy": "http://localhost:5000",
-  "homepage": "http://evanbacon.github.io/expo-gh-pages",
+  "homepage": "http://dvinitsky.github.io/spot-tempo-client",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -35,9 +35,8 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.1.0",
     "eslint-plugin-react": "^7.26.0",
+    "gh-pages": "^3.2.3",
     "prettier": "2.4.1"
   },
-  "private": true,
-  
-
+  "private": true
 }
