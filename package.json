@@ -2,7 +2,7 @@
   "main": "index.js",
   "proxy": "http://localhost:5000",
   "scripts": {
-    "start": "expo start",
+    "start": "npm i && expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
