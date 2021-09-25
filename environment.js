@@ -5,7 +5,7 @@ const ENV = {
   },
   prod: {
     serverUrl: "https://spot-tempo-server.herokuapp.com",
-    redirectUrl: "https://spot-tempo-client.herokuapp.com",
+    redirectUrl: "https://spottempo.netlify.app",
   },
 };
 
