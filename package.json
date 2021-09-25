@@ -1,16 +1,13 @@
 {
   "main": "index.js",
   "proxy": "http://localhost:5000",
-  "homepage": "http://dvinitsky.github.io/spot-tempo-client",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "build": "expo build:web",
-    "deploy": "gh-pages -d web-build",
-    "predeploy": "expo build:web"
+    "build": "expo build:web"
   },
   "dependencies": {
     "axios": "^0.21.4",
