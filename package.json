@@ -1,18 +1,21 @@
 {
   "main": "index.js",
   "proxy": "http://localhost:5000",
+  "homepage": "http://evanbacon.github.io/expo-gh-pages",
   "scripts": {
-    "start": "npm i && expo start",
+    "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "eject": "expo eject"
+    "eject": "expo eject",
+    "build": "expo build:web",
+    "deploy": "gh-pages -d web-build",
+    "predeploy": "expo build:web"
   },
   "dependencies": {
     "axios": "^0.21.4",
     "expo": "^42.0.3",
     "expo-auth-session": "^3.3.1",
-    "expo-cli": "^4.12.0",
     "expo-random": "^11.2.0",
     "expo-web-browser": "^9.2.0",
     "lodash": "^4.17.21",
@@ -34,5 +37,7 @@
     "eslint-plugin-react": "^7.26.0",
     "prettier": "2.4.1"
   },
-  "private": true
+  "private": true,
+  
+
 }
