@@ -2,8 +2,8 @@ import { useEffect } from "react";
 import { maybeCompleteAuthSession } from "expo-web-browser";
 import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
 import { clientId } from "../constants/constants";
-import { useAccessToken } from "../queries/auth";
-import { useLogin } from "../mutations/auth";
+import { getAccessToken, login } from "../queries/auth";
+import { useMutation, useQuery } from "react-query";
 
 maybeCompleteAuthSession();
 
@@ -14,8 +14,8 @@ const discovery = {
 };
 
 export const useAuth = () => {
-  const accessTokenQuery = useAccessToken();
-  const loginMutation = useLogin();
+  const accessTokenQuery = useQuery("getAccessToken", getAccessToken);
+  const loginMutation = useMutation("login", login);
 
   const [request, response, promptAsync] = useAuthRequest(
     {

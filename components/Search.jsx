@@ -1,9 +1,13 @@
 import React, { useState } from "react";
-import { SongList } from "./SongList";
 import styled from "styled-components/native";
-import { Button, Text } from "react-native";
-import { useMatchingSongs, useSavedSongsCount } from "../queries/songs";
-import { useReloadSavedSongs } from "../mutations/songs";
+import { Button, FlatList, Text } from "react-native";
+import {
+  getMatchingSongs,
+  getSavedSongsCount,
+  reloadSavedSongs,
+} from "../queries/songs";
+import Song from "./Song";
+import { useMutation, useQuery } from "react-query";
 
 const SearchArea = styled.View`
   display: flex
@@ -31,12 +35,20 @@ const Loading = styled.Text`
 const Search = () => {
   const [bpm, setBpm] = useState();
 
-  const getSavedSongsCountQuery = useSavedSongsCount();
-  const reloadSavedSongsMutation = useReloadSavedSongs();
+  const getSavedSongsCountQuery = useQuery(
+    "getSavedSongsCount",
+    getSavedSongsCount
+  );
+  const reloadSavedSongsMutation = useMutation(
+    "reloadSavedSongs",
+    reloadSavedSongs
+  );
 
-  const getMatchingSongsQuery = useMatchingSongs({ bpm });
-
-  const reloadSavedSongs = () => reloadSavedSongsMutation.mutate();
+  const getMatchingSongsQuery = useQuery(
+    "getMatchingSongs",
+    () => getMatchingSongs(bpm),
+    { enabled: false }
+  );
 
   const handleChange = (text) => setBpm(text);
 
@@ -87,7 +99,10 @@ const Search = () => {
         <Loading>Loading all of your saved songs...</Loading>
       ) : (
         <>
-          <Button onPress={reloadSavedSongs} title="Reload saved songs" />
+          <Button
+            onPress={reloadSavedSongsMutation.mutate}
+            title="Reload saved songs"
+          />
 
           <SearchArea>
             <SearchBar
@@ -102,14 +117,15 @@ const Search = () => {
             </SearchButton>
           </SearchArea>
 
-          <SongList
-            label="Search Results from Liked Songs"
-            songs={getMatchingSongsQuery.data}
-            // shiftSong={addSongToDestination}
+          <FlatList
+            data={getMatchingSongsQuery.data}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => <Song song={item} />}
           />
         </>
       )}
     </>
   );
 };
+
 export default Search;
