@@ -6,6 +6,11 @@ export const getAccessToken = async () => {
   return data;
 };
 
+export const getUserId = async () => {
+  const { data } = await axios.get(`${serverUrl}/getUserId`);
+  return data;
+};
+
 export const login = async ({ code, redirectUri }) => {
   const { data } = await axios.post(`${serverUrl}/login`, {
     code,

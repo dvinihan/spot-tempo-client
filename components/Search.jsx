@@ -35,8 +35,8 @@ const Loading = styled.Text`
 const Search = ({ userId }) => {
   const [bpm, setBpm] = useState();
 
-  const getSavedSongsCountQuery = useQuery("getSavedSongsCount", () =>
-    getSavedSongsCount(userId)
+  const getSavedSongsCountQuery = useQuery(["getSavedSongsCount", userId], () =>
+    userId ? getSavedSongsCount(userId) : undefined
   );
   const reloadSavedSongsMutation = useMutation(
     "reloadSavedSongs",
@@ -54,7 +54,7 @@ const Search = ({ userId }) => {
   const handleSearch = () => getMatchingSongsQuery.refetch();
 
   const savedSongsCount =
-    reloadSavedSongsMutation.data?.total ?? getSavedSongsCountQuery.data?.total;
+    reloadSavedSongsMutation.data?.total ?? getSavedSongsCountQuery.data?.count;
 
   return (
     <>

@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { maybeCompleteAuthSession } from "expo-web-browser";
 import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
 import { clientId } from "../constants/constants";
-import { getAccessToken, login } from "../queries/auth";
+import { getAccessToken, getUserId, login } from "../queries/auth";
 import { useMutation, useQuery } from "react-query";
 
 maybeCompleteAuthSession();
@@ -16,6 +16,7 @@ const discovery = {
 export const useAuth = () => {
   const accessTokenQuery = useQuery("getAccessToken", getAccessToken);
   const loginMutation = useMutation("login", login);
+  const userIdQuery = useQuery("getUserId", getUserId);
 
   const [request, response, promptAsync] = useAuthRequest(
     {
@@ -49,6 +50,6 @@ export const useAuth = () => {
       accessTokenQuery.data?.accessToken || loginMutation.data?.accessToken,
     isLoading: accessTokenQuery.isLoading || loginMutation.isLoading,
     login: promptAsync,
-    userId: loginMutation.data?.userId,
+    userId: userIdQuery.data?.userId || loginMutation.data?.userId,
   };
 };
