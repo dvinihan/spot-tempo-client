@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components/native";
-import { Button, FlatList, Text } from "react-native";
+import { Button, FlatList } from "react-native";
 import {
   getMatchingSongs,
   getSavedSongsCount,
@@ -9,22 +9,30 @@ import {
 import Song from "./Song";
 import { useMutation, useQuery } from "react-query";
 
-const SearchArea = styled.View`
-  display: flex
+const TotalSongs = styled.Text`
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: 500;
+`;
+const ReloadButtonView = styled.View`
+  margin-bottom: 10px;
+`;
+const SearchBar = styled.View`
+  display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 10px;
 `;
-const SearchBar = styled.TextInput`
-  font-size: 24px;
+const SearchInput = styled.TextInput`
+  font-size: 18px;
   border: 1px solid black;
-  margin: 5px;
+  margin-right: 15px;
   width: 120px;
-  padding: 12px;
+  padding: 5px;
+  font-weight: 500;
 `;
-const SearchButton = styled.Button`
-  padding: 15px;
-`;
+const SearchButton = styled.Button``;
 const SearchText = styled.Text`
   padding: 15px;
 `;
@@ -32,12 +40,11 @@ const Loading = styled.Text`
   margin-top: 20px;
 `;
 
-const Search = () => {
+const Search = ({ userId }) => {
   const [bpm, setBpm] = useState();
 
-  const getSavedSongsCountQuery = useQuery(
-    "getSavedSongsCount",
-    getSavedSongsCount
+  const getSavedSongsCountQuery = useQuery(["getSavedSongsCount", userId], () =>
+    userId ? getSavedSongsCount(userId) : undefined
   );
   const reloadSavedSongsMutation = useMutation(
     "reloadSavedSongs",
@@ -55,23 +62,25 @@ const Search = () => {
   const handleSearch = () => getMatchingSongsQuery.refetch();
 
   const savedSongsCount =
-    reloadSavedSongsMutation.data?.total ?? getSavedSongsCountQuery.data?.total;
+    reloadSavedSongsMutation.data?.total ?? getSavedSongsCountQuery.data?.count;
 
   return (
     <>
-      <Text>Total saved songs: {savedSongsCount}</Text>
+      <TotalSongs>Total saved songs: {savedSongsCount}</TotalSongs>
 
       {reloadSavedSongsMutation.isLoading ? (
         <Loading>Loading all of your saved songs...</Loading>
       ) : (
         <>
-          <Button
-            onPress={reloadSavedSongsMutation.mutate}
-            title="Reload saved songs"
-          />
+          <ReloadButtonView>
+            <Button
+              onPress={reloadSavedSongsMutation.mutate}
+              title="Reload saved songs"
+            />
+          </ReloadButtonView>
 
-          <SearchArea>
-            <SearchBar
+          <SearchBar>
+            <SearchInput
               id="searchbar"
               type="text"
               onChangeText={handleChange}
@@ -81,7 +90,7 @@ const Search = () => {
             <SearchButton title="Search" onPress={handleSearch}>
               <SearchText>Search</SearchText>
             </SearchButton>
-          </SearchArea>
+          </SearchBar>
 
           <FlatList
             data={getMatchingSongsQuery.data}

@@ -5,8 +5,8 @@ import { useMutation } from "react-query";
 import styled from "styled-components/native";
 import { addSong, removeSong } from "../queries/songs";
 
-const SongView = styled.View`
-  margin: 20px;
+const TouchableSongView = styled.TouchableHighlight`
+  margin: 12px;
   padding: 10px;
   border-radius: 20px;
   background-color: ${(props) =>
@@ -15,10 +15,6 @@ const SongView = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-`;
-const Touchable = styled.TouchableHighlight`
-  text-align: center;
-  width: 50px;
 `;
 const Spacer = styled.View`
   width: 50px;
@@ -65,12 +61,14 @@ export const Song = ({ song, getMatchingSongsQuery }) => {
   const removeSongMutation = useMutation("removeSong", removeSong);
 
   const shiftSong = () => {
-    const mutation = song.isInDestinationPlaylist
-      ? removeSongMutation
-      : addSongMutation;
+    if (!isLoading) {
+      const mutation = song.isInDestinationPlaylist
+        ? removeSongMutation
+        : addSongMutation;
 
-    setIsLoading(true);
-    mutation.mutate({ songUri: song.uri, getMatchingSongsQuery });
+      setIsLoading(true);
+      mutation.mutate({ songUri: song.uri, getMatchingSongsQuery });
+    }
   };
 
   const truncatedSongName = truncate(song.name, { length: 30 });
@@ -79,13 +77,15 @@ export const Song = ({ song, getMatchingSongsQuery }) => {
   });
 
   return (
-    <>
-      <SongView isInDestinationPlaylist={song.isInDestinationPlaylist}>
-        <Touchable onPress={() => shiftSong(song)}>
-          <AddRemoveText>
-            {song.isInDestinationPlaylist ? "-" : "+"}
-          </AddRemoveText>
-        </Touchable>
+    <TouchableSongView
+      isInDestinationPlaylist={song.isInDestinationPlaylist}
+      onPress={() => shiftSong(song)}
+    >
+      {/* Touchable requires one child only */}
+      <>
+        <AddRemoveText>
+          {song.isInDestinationPlaylist ? "-" : "+"}
+        </AddRemoveText>
 
         <SongInfo>
           <SongName>{truncatedSongName}</SongName>
@@ -100,8 +100,8 @@ export const Song = ({ song, getMatchingSongsQuery }) => {
             <ActivityIndicator size="large" />
           </LoadingView>
         )}
-      </SongView>
-    </>
+      </>
+    </TouchableSongView>
   );
 };
 
