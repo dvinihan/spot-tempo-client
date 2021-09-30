@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { useMutation } from "react-query";
 import styled from "styled-components/native";
+import { useAppContext } from "../context/appContext";
 import { addSong, removeSong } from "../queries/songs";
 
 const TouchableSongView = styled.TouchableHighlight`
@@ -48,6 +49,8 @@ const LoadingView = styled.View`
 `;
 
 export const Song = ({ song, getMatchingSongsQuery }) => {
+  const { accessToken } = useAppContext();
+
   const [isLoading, setIsLoading] = useState(false);
 
   // this is needed to prevent lag in color change
@@ -67,7 +70,11 @@ export const Song = ({ song, getMatchingSongsQuery }) => {
         : addSongMutation;
 
       setIsLoading(true);
-      mutation.mutate({ songUri: song.uri, getMatchingSongsQuery });
+      mutation.mutate({
+        songUri: song.uri,
+        getMatchingSongsQuery,
+        accessToken,
+      });
     }
   };
 

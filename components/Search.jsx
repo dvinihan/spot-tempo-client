@@ -8,6 +8,7 @@ import {
 } from "../queries/songs";
 import Song from "./Song";
 import { useMutation, useQuery } from "react-query";
+import { useAppContext } from "../context/appContext";
 
 const TotalSongs = styled.Text`
   margin-bottom: 10px;
@@ -40,20 +41,22 @@ const Loading = styled.Text`
   margin-top: 20px;
 `;
 
-const Search = ({ userId }) => {
+const Search = () => {
+  const { accessToken } = useAppContext();
+
   const [bpm, setBpm] = useState();
 
-  const getSavedSongsCountQuery = useQuery(["getSavedSongsCount", userId], () =>
-    userId ? getSavedSongsCount(userId) : undefined
+  const getSavedSongsCountQuery = useQuery(
+    ["getSavedSongsCount", accessToken],
+    () => (accessToken ? getSavedSongsCount(accessToken) : undefined)
   );
-  const reloadSavedSongsMutation = useMutation(
-    "reloadSavedSongs",
-    reloadSavedSongs
+  const reloadSavedSongsMutation = useMutation("reloadSavedSongs", () =>
+    reloadSavedSongs(accessToken)
   );
 
   const getMatchingSongsQuery = useQuery(
     "getMatchingSongs",
-    () => getMatchingSongs(bpm),
+    () => getMatchingSongs(bpm, accessToken),
     { enabled: false }
   );
 

@@ -1,10 +1,11 @@
 import React from "react";
 import styled from "styled-components/native";
-import { Button, Text } from "react-native";
+import { Text } from "react-native";
 import { QueryClient, QueryClientProvider } from "react-query";
 import Search from "./Search";
 import Header from "./Header";
 import { useAuth } from "../hooks/useAuth";
+import { AppContextProvider } from "../context/appContext";
 
 const AppView = styled.View`
   background-color: #cdedcc;
@@ -16,18 +17,12 @@ const AppView = styled.View`
 `;
 
 const App = () => {
-  const { accessToken, isLoading, login, userId } = useAuth();
+  const { isLoading } = useAuth();
 
   return (
     <AppView>
       <Header />
-      {isLoading ? (
-        <Text>Loading...</Text>
-      ) : accessToken ? (
-        <Search userId={userId} />
-      ) : (
-        <Button onPress={login} title="Log in to Spotify" />
-      )}
+      {isLoading ? <Text>Loading...</Text> : <Search />}
     </AppView>
   );
 };
@@ -36,7 +31,9 @@ const AppWrapper = () => {
   const queryClient = new QueryClient();
   return (
     <QueryClientProvider client={queryClient}>
-      <App />
+      <AppContextProvider>
+        <App />
+      </AppContextProvider>
     </QueryClientProvider>
   );
 };
